@@ -1,6 +1,6 @@
 namespace backend.Models;
 
-public class UserRequestDto
+public class RegistrationRequestDto
 {
     public required string Name { get; set; }
     public required string Email { get; set; }

@@ -20,7 +20,7 @@ public class ListsRepository : IListsRepository
     }
 
 
-    public List<string> UpdateList(AddItemRequest request)
+    public List<string> UpdateList(UpdateListRequest request)
     {
 
         var lists = _context.TopTens.FirstOrDefault(x => x.UserId == request.userId);

@@ -10,6 +10,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<TopTenContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("TopTenContext")));
 
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+var JwtToken = builder.Configuration["JwtSettings:Token"];
+
 // Add services to the container.
 
 builder.Services.AddControllers();

@@ -62,6 +62,31 @@ public class AuthRepository : IAuthRepository
 
     }
 
+    public RefreshToken GetRefreshToken()
+    {
+        var refreshToken = new RefreshToken()
+        {
+            Token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)),
+            Expires = DateTime.Now.AddDays(7)
+        };
+        return refreshToken;
+    }
+
+    public void SetRefreshToken(RefreshToken newRefreshToken, HttpResponse response, User user)
+    {
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Expires = newRefreshToken.Expires
+        };
+        response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
+
+        user.RefreshToken = newRefreshToken.Token;
+        user.Created = newRefreshToken.Created;
+        user.Expires = newRefreshToken.Expires;
+
+    }
+
     public void Add(User user) => _context.Users.Add(user);
 
     public void Save() => _context.SaveChanges();

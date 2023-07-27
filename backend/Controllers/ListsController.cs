@@ -39,7 +39,7 @@ public class ListsController : ControllerBase
     }
 
     [HttpPut]
-    public ActionResult<Lists> Update(AddItemRequest request)
+    public ActionResult<Lists> Update(UpdateListRequest request)
     {
         var lists = _listsRepository.GetTopTens(request.userId);
 

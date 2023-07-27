@@ -37,7 +37,15 @@ public class UsersController : ControllerBase
             return NotFound();
         }
 
-        return Ok(user);
+        var response = new UserResponseDto
+        {
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+        };
+
+
+        return Ok(response);
     }
 
 

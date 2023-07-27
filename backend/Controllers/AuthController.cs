@@ -1,4 +1,3 @@
-using backend.Data;
 using backend.Models;
 using backend.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -10,20 +9,18 @@ namespace backend.Controllers;
 
 public class AuthController : ControllerBase
 {
-    private TopTenContext _context;
     private IAuthRepository _authRepository;
     private IUserRepository _userRepository;
 
-    public AuthController(IAuthRepository authRepository, TopTenContext context, IUserRepository userRepository)
+    public AuthController(IAuthRepository authRepository, IUserRepository userRepository)
     {
-        _context = context;
         _authRepository = authRepository;
         _userRepository = userRepository;
 
     }
 
     [HttpPost("register")]
-    public ActionResult<User> Register(UserRequestDto request)
+    public ActionResult<User> Register(RegistrationRequestDto request)
     {
         var exictingUser = _userRepository.GetByEmail(request.Email);
 
@@ -47,6 +44,7 @@ public class AuthController : ControllerBase
                 Music = new List<string>(new string[10]),
                 Books = new List<string>(new string[10]),
             }
+
         };
 
         _authRepository.Add(user);
@@ -63,7 +61,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login")]
-    public ActionResult<string> Login(UserRequestDto request)
+    public ActionResult<string> Login(LoginRequestDto request)
     {
         var user = _userRepository.GetByEmail(request.Email);
 
@@ -78,6 +76,38 @@ public class AuthController : ControllerBase
         }
 
         var token = _authRepository.CreateToken(user);
+
+        var refreshToken = _authRepository.GetRefreshToken();
+        _authRepository.SetRefreshToken(refreshToken, Response, user);
+
+        _authRepository.Save();
+
+        return Ok(token);
+    }
+
+    [HttpPost("refresh-token")]
+    public IActionResult RefreshToken(int Id)
+    {
+        var user = _userRepository.GetById(Id);
+
+        var refreshToken = Request.Cookies["refreshToken"];
+
+        if (!user.RefreshToken.Equals(refreshToken))
+        {
+            return Unauthorized("Invalid Refresh Token");
+        }
+
+        if (user.Expires < DateTime.Now)
+        {
+            return Unauthorized("Token expired");
+        }
+
+        var token = _authRepository.CreateToken(user);
+        var newRefreshToken = _authRepository.GetRefreshToken();
+        _authRepository.SetRefreshToken(newRefreshToken, Response, user);
+
+        _authRepository.Save();
+
         return Ok(token);
     }
 
