@@ -19,7 +19,6 @@ public class ListsRepository : IListsRepository
         return _context.TopTens.FirstOrDefault(x => x.UserId == userId);
     }
 
-
     public List<string> UpdateList(UpdateListRequest request)
     {
 
@@ -29,12 +28,21 @@ public class ListsRepository : IListsRepository
 
         if (request.action == "add")
         {
+            if (category[request.position] != null)
+            {
+                throw new Exception("item already in this place");
+            }
             category[request.position] = request.item;
         }
 
-        if (request.action == "remove")
+        else if (request.action == "remove")
         {
             category[request.position] = null;
+        }
+
+        else
+        {
+            throw new ArgumentException("Invalid Action");
         }
 
         return category;

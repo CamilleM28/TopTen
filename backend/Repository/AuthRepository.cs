@@ -19,8 +19,6 @@ public class AuthRepository : IAuthRepository
         _context = context;
     }
 
-
-
     public void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
     {
         using (var hmac = new HMACSHA512())

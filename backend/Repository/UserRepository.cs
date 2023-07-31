@@ -14,4 +14,6 @@ public class UserRepository : IUserRepository
     public User? GetById(int Id) => _context.Users.Find(Id);
     public User? GetByEmail(string email) => _context.Users.FirstOrDefault(x => x.Email == email);
     public List<User> GetAll() => _context.Users.ToList();
+    public void Delete(User user) => _context.Users.Remove(user);
+    public void Save() => _context.SaveChanges();
 }

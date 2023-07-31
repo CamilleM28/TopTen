@@ -12,12 +12,10 @@ namespace backend.Controllers;
 
 public class UsersController : ControllerBase
 {
-    private readonly TopTenContext _context;
     private readonly IUserRepository _userRepository;
 
-    public UsersController(TopTenContext context, IUserRepository userRepository)
+    public UsersController(IUserRepository userRepository)
     {
-        _context = context;
         _userRepository = userRepository;
     }
 
@@ -50,17 +48,17 @@ public class UsersController : ControllerBase
 
 
     [HttpDelete]
-    public async Task<ActionResult> Delete(int id)
+    public ActionResult Delete(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = _userRepository.GetById(id);
 
         if (user == null)
         {
             return NotFound();
         }
 
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+        _userRepository.Delete(user);
+        _userRepository.Save();
 
         return NoContent();
     }
