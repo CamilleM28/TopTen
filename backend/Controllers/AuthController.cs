@@ -77,12 +77,18 @@ public class AuthController : ControllerBase
 
         var token = _authRepository.CreateToken(user);
 
+        var returnObject = new
+        {
+            token = token,
+            Id = user.Id
+        };
+
         var refreshToken = _authRepository.GetRefreshToken();
         _authRepository.SetRefreshToken(refreshToken, Response, user);
 
         _authRepository.Save();
 
-        return Ok(token);
+        return Ok(returnObject);
     }
 
     [HttpPost("refresh-token")]
