@@ -74,8 +74,11 @@ public class AuthRepository : IAuthRepository
     {
         var cookieOptions = new CookieOptions
         {
+            Secure = true,
             HttpOnly = true,
-            Expires = newRefreshToken.Expires
+            Expires = newRefreshToken.Expires,
+            SameSite = SameSiteMode.None,
+
         };
         response.Cookies.Append("refreshToken", newRefreshToken.Token, cookieOptions);
 

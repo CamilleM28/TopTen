@@ -26,7 +26,8 @@ builder.Services.AddCors(options =>
                       {
                           policy.WithOrigins("http://127.0.0.1:5173")
                                             .AllowAnyHeader()
-                                            .AllowAnyMethod();
+                                            .AllowAnyMethod()
+                                            .AllowCredentials();
                       });
 });
 
@@ -77,7 +78,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateIssuer = false,
         ValidateAudience = false,
     };
+
 });
+
 var app = builder.Build();
 
 
