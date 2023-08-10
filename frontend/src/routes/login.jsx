@@ -1,11 +1,7 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function Login() {
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
+export default function Login(setUser, setLists) {
   const navigate = useNavigate();
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await fetch("https://localhost:7038/Auth/Login", {
@@ -19,28 +15,42 @@ export default function Login() {
         password: e.target.password.value,
       }),
     });
-    const response = await res.json();
-    setToken(response.token);
-    setUserId(response.id);
-    getUser();
-
-    if (userId !== "") {
-      navigate("home");
+    if (res.ok) {
+      const response = await res.json();
+      localStorage.setItem("id", response.id);
+      localStorage.setItem("token", response.token);
+      navigate(`home/${response.id}`);
+    } else {
+      alert("Wrong Credentials");
     }
   };
 
-  const getUser = async () => {
-    const res = await fetch(`https://localhost:7038/Users/user?id=${userId}`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  // const getUser = async (id, token) => {
+  //   const res = await fetch(`https://localhost:7038/Users/user?id=${id}`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
 
-    const response = await res.json();
-    console.log(response);
-  };
+  //   const response = await res.json();
+  //   setUser(response);
+  //   console.log(response);
+  // };
+
+  // const getLists = async (id, token) => {
+  //   const res = await fetch(`https://localhost:7038/Lists?id=${id}`, {
+  //     method: "GET",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+  //   const response = await res.json();
+  //   setLists(response);
+  //   console.log(response);
+  // };
 
   return (
     <>
