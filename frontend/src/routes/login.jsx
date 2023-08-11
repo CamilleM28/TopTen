@@ -19,7 +19,7 @@ export default function Login(setUser, setLists) {
       const response = await res.json();
       localStorage.setItem("id", response.id);
       localStorage.setItem("token", response.token);
-      navigate(`home/${response.id}`);
+      navigate("/");
     } else {
       alert("Wrong Credentials");
     }

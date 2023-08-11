@@ -10,14 +10,14 @@ import { loader as rootLoader } from "./routes/home.jsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: "login",
     element: <Login />,
     errorElement: <ErrorPage />,
   },
   {
-    path: "home/:id",
+    path: "/",
     element: <Home />,
-    loader: async ({ params }) => rootLoader(params.id),
+    loader: rootLoader,
   },
 ]);
 
