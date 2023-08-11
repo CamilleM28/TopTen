@@ -1,6 +1,6 @@
 export default async function getUser() {
   const id = localStorage.getItem("id");
-  const token = localStorage.getItem("token");
+  let token = localStorage.getItem("token");
 
   let userResponse = await getUserData(id, token);
 
