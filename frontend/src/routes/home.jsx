@@ -1,5 +1,5 @@
 import { redirect, useLoaderData } from "react-router-dom";
-import getUser from "../users";
+import getUser from "../getUser";
 
 export async function loader(id) {
   const user = await getUser(id);

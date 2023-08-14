@@ -1,12 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import App from "./App.jsx";
 import "./index.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./routes/login";
 import Home from "./routes/home";
+import Sucess from "./routes/success";
 import ErrorPage from "./error-page";
 import { loader as rootLoader } from "./routes/home.jsx";
+import "./Main.css";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
     path: "/",
     element: <Home />,
     loader: rootLoader,
+  },
+  {
+    path: "/sucess",
+    element: <Sucess />,
   },
 ]);
 

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function Login(setUser, setLists) {
   const navigate = useNavigate();
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const res = await fetch("https://localhost:7038/Auth/Login", {
       method: "POST",
@@ -15,6 +15,7 @@ export default function Login(setUser, setLists) {
         password: e.target.password.value,
       }),
     });
+
     if (res.ok) {
       const response = await res.json();
       localStorage.setItem("id", response.id);
@@ -25,37 +26,32 @@ export default function Login(setUser, setLists) {
     }
   };
 
-  // const getUser = async (id, token) => {
-  //   const res = await fetch(`https://localhost:7038/Users/user?id=${id}`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-
-  //   const response = await res.json();
-  //   setUser(response);
-  //   console.log(response);
-  // };
-
-  // const getLists = async (id, token) => {
-  //   const res = await fetch(`https://localhost:7038/Lists?id=${id}`, {
-  //     method: "GET",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-  //   const response = await res.json();
-  //   setLists(response);
-  //   console.log(response);
-  // };
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const res = await fetch("https://localhost:7038/Auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: e.target.username.value,
+        email: e.target.email.value,
+        password: e.target.password.value,
+      }),
+    });
+    console.log(e.target.password.value);
+    const response = await res.text();
+    if (res.ok) {
+      navigate("/sucess");
+    } else {
+      alert(`${response}`);
+    }
+  };
 
   return (
     <>
       <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleLogin}>
         <label>
           Email:
           <input type="text" name="email" />
@@ -63,6 +59,26 @@ export default function Login(setUser, setLists) {
         <label>
           Password:
           <input type="text" name="password" />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
+      <h1>Register</h1>
+      <form onSubmit={handleRegister}>
+        <label>
+          Username:
+          <input type="text" name="username" />
+        </label>
+        <label>
+          Email:
+          <input type="text" name="email" />
+        </label>
+        <label>
+          Password:
+          <input type="text" name="password" />
+        </label>
+        <label>
+          Confirm Password:
+          <input type="text" name="confirm" />
         </label>
         <input type="submit" value="Submit" />
       </form>
