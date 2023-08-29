@@ -1,6 +1,7 @@
 using backend.Models;
 using backend.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Google.Apis.Auth.OAuth2.Requests;
 
 namespace backend.Controllers;
 
@@ -91,7 +92,32 @@ public class AuthController : ControllerBase
         return Ok(returnObject);
     }
 
-    [HttpPost("refresh-token")]
+
+    [HttpPost("auth-google")]
+    public async Task<ActionResult<string>> GetGoogleToken(GoogleTokenRequestDto request)
+    {
+        var token = new AuthorizationCodeTokenRequest()
+        {
+            Code = request.Code,
+            RedirectUri = request.Uri,
+            ClientId = request.Id,
+            ClientSecret = request.Secret
+,
+        };
+
+        var source = new CancellationTokenSource();
+        var cancellationToken = source.Token;
+
+        var clock = new Clock();
+
+        var response = await token.ExecuteAsync(new HttpClient(), "https://oauth2.googleapis.com/token", cancellationToken, clock);
+
+        return Ok(response.AccessToken);
+    }
+
+
+
+    [HttpPost("refresh-token"), HttpPost("auth/google/refresh-token")]
     public IActionResult RefreshToken(int Id)
     {
         var user = _userRepository.GetById(Id);

@@ -1,5 +1,6 @@
 import { redirect, useLoaderData } from "react-router-dom";
 import getUser from "../getUser";
+import { GoogleLogin } from "@react-oauth/google";
 
 export async function loader(id) {
   const user = await getUser(id);

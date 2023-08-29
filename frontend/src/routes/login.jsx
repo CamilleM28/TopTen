@@ -1,7 +1,9 @@
 import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from "@react-oauth/google";
 
-export default function Login(setUser, setLists) {
+export default function Login() {
   const navigate = useNavigate();
+
   const handleLogin = async (e) => {
     e.preventDefault();
     const res = await fetch("https://localhost:7038/Auth/Login", {
@@ -48,6 +50,28 @@ export default function Login(setUser, setLists) {
     }
   };
 
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (CodeResponse) => {
+      console.log(CodeResponse);
+      var code = CodeResponse.code;
+      console.log(code);
+      const res = await fetch("https://localhost:7038/Auth/auth-google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          code: code,
+          uri: "http://localhost:3000",
+          Id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+          Secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET,
+        }),
+      });
+      console.log(await res.text());
+    },
+    flow: "auth-code",
+  });
+
   return (
     <>
       <h1>Login</h1>
@@ -82,6 +106,9 @@ export default function Login(setUser, setLists) {
         </label>
         <input type="submit" value="Submit" />
       </form>
+
+      <h2>Sign in with Google</h2>
+      <button onClick={googleLogin} />
     </>
   );
 }
