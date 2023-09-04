@@ -2,6 +2,7 @@ using backend.Models;
 using backend.Repository;
 using Microsoft.AspNetCore.Mvc;
 using Google.Apis.Auth.OAuth2.Requests;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace backend.Controllers;
 
@@ -23,9 +24,9 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public ActionResult<User> Register(RegistrationRequestDto request)
     {
-        var exictingUser = _userRepository.GetByEmail(request.Email);
+        var existingUser = _userRepository.GetByEmail(request.Email);
 
-        if (exictingUser != null)
+        if (existingUser != null)
         {
             return Conflict("Account using this email already exists");
         }
@@ -96,7 +97,7 @@ public class AuthController : ControllerBase
     [HttpPost("auth-google")]
     public async Task<ActionResult<string>> GetGoogleToken(GoogleTokenRequestDto request)
     {
-        var token = new AuthorizationCodeTokenRequest()
+        var tokenRequest = new AuthorizationCodeTokenRequest()
         {
             Code = request.Code,
             RedirectUri = request.Uri,
@@ -110,9 +111,51 @@ public class AuthController : ControllerBase
 
         var clock = new Clock();
 
-        var response = await token.ExecuteAsync(new HttpClient(), "https://oauth2.googleapis.com/token", cancellationToken, clock);
+        var response = await tokenRequest.ExecuteAsync(new HttpClient(), "https://oauth2.googleapis.com/token", cancellationToken, clock);
 
-        return Ok(response.AccessToken);
+        var handler = new JwtSecurityTokenHandler();
+        var decodedToken = handler.ReadJwtToken(response.IdToken);
+        var tokenInfo = decodedToken.Payload;
+
+        var name = tokenInfo.First(r => r.Key == "name").Value.ToString();
+        var email = tokenInfo.First(r => r.Key == "email").Value.ToString();
+
+
+        var existingUser = _userRepository.GetByEmail(email);
+        User user;
+        if (existingUser == null)
+        {
+            user = new User
+            {
+                Name = name,
+                Email = email,
+
+                Lists = new Lists
+                {
+                    Movies = new List<string>(new string[10]),
+                    TV = new List<string>(new string[10]),
+                    Music = new List<string>(new string[10]),
+                    Books = new List<string>(new string[10]),
+                }
+
+            };
+
+            _authRepository.Add(user);
+            _authRepository.Save();
+        }
+
+        else
+        {
+            user = existingUser;
+        }
+
+        var token = _authRepository.CreateToken(user);
+        var refreshToken = _authRepository.GetRefreshToken();
+        _authRepository.SetRefreshToken(refreshToken, Response, user);
+        _authRepository.Save();
+
+
+        return Ok(new { id = user.Id, name = name, email = email, token = token });
     }
 
 

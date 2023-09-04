@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
+import GoogleG from "../../public/btn_google_signin_light_normal_web@2x.png";
+import "../styles/login.css";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -67,48 +69,72 @@ export default function Login() {
           Secret: import.meta.env.VITE_GOOGLE_CLIENT_SECRET,
         }),
       });
-      console.log(await res.text());
+      if (res.ok) {
+        const response = await res.json();
+        console.log(response);
+        localStorage.setItem("id", response.id);
+        localStorage.setItem("token", response.token);
+        navigate("/");
+      } else {
+        alert("Wrong Credentials");
+      }
     },
     flow: "auth-code",
   });
 
   return (
-    <>
-      <h1>Login</h1>
-      <form onSubmit={handleLogin}>
-        <label>
-          Email:
-          <input type="text" name="email" />
-        </label>
-        <label>
-          Password:
-          <input type="text" name="password" />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
-      <h1>Register</h1>
-      <form onSubmit={handleRegister}>
-        <label>
-          Username:
-          <input type="text" name="username" />
-        </label>
-        <label>
-          Email:
-          <input type="text" name="email" />
-        </label>
-        <label>
-          Password:
-          <input type="text" name="password" />
-        </label>
-        <label>
-          Confirm Password:
-          <input type="text" name="confirm" />
-        </label>
-        <input type="submit" value="Submit" />
-      </form>
+    <div id="container">
+      <div class="section" id="login">
+        <h1>Login</h1>
 
-      <h2>Sign in with Google</h2>
-      <button onClick={googleLogin} />
-    </>
+        <form onSubmit={handleLogin}>
+          <label>
+            Email <input type="text" name="email" required />
+          </label>
+          <br />
+          <br />
+          <label>
+            Password <input type="password" name="password" required />
+          </label>
+          <br />
+          <br />
+          <input class="submit" type="submit" value="Login" />
+          <br />
+          <br />
+        </form>
+        <hr />
+        <br />
+        <div id="google-button" onClick={googleLogin}>
+          <img src={GoogleG} height="50px" />
+        </div>
+      </div>
+
+      <div class="section">
+        <h1>Register</h1>
+        <form onSubmit={handleRegister}>
+          <label>
+            Username <input type="text" name="username" required />
+          </label>
+          <br />
+          <br />
+          <label>
+            Email <input type="text" name="email" required />
+          </label>
+          <br />
+          <br />
+          <label>
+            Password <input type="password" name="password" required />
+          </label>
+          <br />
+          <br />
+          <label>
+            Confirm Password <input type="password" name="confirm" required />
+          </label>
+          <br />
+          <br />
+          <input class="submit" type="submit" value="Register" />
+        </form>
+      </div>
+    </div>
   );
 }
