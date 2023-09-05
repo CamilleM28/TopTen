@@ -1,0 +1,23 @@
+#lists {
+  display: grid;
+  grid-template-columns: 0.5fr 1fr 1fr 0.5fr;
+  grid-gap: 20px;
+}
+
+.category {
+  border: solid;
+  border-radius: 10px;
+}
+
+#music,
+#tv {
+  grid-column-start: 2;
+}
+
+.heading {
+  text-align: center;
+}
+
+ul {
+  list-style-type: none;
+}
