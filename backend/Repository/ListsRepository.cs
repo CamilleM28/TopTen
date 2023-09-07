@@ -52,19 +52,19 @@ public class ListsRepository : IListsRepository
     {
         switch (category)
         {
-            case "Movies":
+            case "movies":
                 return lists.Movies;
 
 
-            case "TV":
+            case "tv":
                 return lists.TV;
 
 
-            case "Music":
+            case "music":
                 return lists.Music;
 
 
-            case "Books":
+            case "books":
                 return lists.Books;
 
 
