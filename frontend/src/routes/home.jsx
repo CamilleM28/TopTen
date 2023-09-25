@@ -1,20 +1,11 @@
-import { redirect, useLoaderData } from "react-router-dom";
-import getUser from "../getUser";
+import { useLoaderData, useActionData } from "react-router-dom";
 import "../styles/home.css";
 import ListItem from "../components/ListItem";
 
-export async function loader() {
-  const user = await getUser();
-  if (!user) {
-    return redirect("/login");
-  }
-  return { user };
-}
-
 export default function Home() {
   const { user } = useLoaderData();
-  console.log(user);
-  console.log(user.lists.music);
+
+  const data = useActionData();
 
   const mapper = (list, category) => {
     return (
@@ -35,6 +26,7 @@ export default function Home() {
   return (
     <>
       <h1 class="heading">TopTens</h1>
+      {data && data.error && <p>{data.error}</p>}
       <div id="lists">
         <div class="category" id="music">
           <h2 class="heading">Music</h2>

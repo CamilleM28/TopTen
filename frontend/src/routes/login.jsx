@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
-import GoogleG from "../../public/btn_google_signin_light_normal_web@2x.png";
+import GoogleG from "/btn_google_signin_light_normal_web@2x.png";
 import "../styles/login.css";
 
 export default function Login() {

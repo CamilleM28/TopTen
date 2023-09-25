@@ -41,14 +41,12 @@ public class ListsController : ControllerBase
     [HttpPut]
     public ActionResult<Lists> Update(UpdateListRequest request)
     {
-        var lists = _listsRepository.GetTopTens(request.userId);
 
-        var updatedList = _listsRepository.UpdateList(request);
-
-        var category = _listsRepository.GetCategory(lists, request.category);
-        category = updatedList;
-
+        _listsRepository.UpdateList(request);
         _listsRepository.Save();
+
+        var lists = GetTopTens(request.UserId);
+
         return Ok(lists);
 
     }

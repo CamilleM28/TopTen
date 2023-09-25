@@ -22,22 +22,22 @@ public class ListsRepository : IListsRepository
     public List<string> UpdateList(UpdateListRequest request)
     {
 
-        var lists = _context.TopTens.FirstOrDefault(x => x.UserId == request.userId);
+        var lists = _context.TopTens.FirstOrDefault(x => x.UserId == request.UserId) ?? throw new ArgumentException("User has no lists");
 
-        var category = GetCategory(lists, request.category);
+        var category = GetCategory(lists, request.Category);
 
-        if (request.action == "add")
+        if (request.Action == "add")
         {
-            if (category[request.position] != null)
+            if (category[request.Position] != null)
             {
                 throw new Exception("item already in this place");
             }
-            category[request.position] = request.item;
+            category[request.Position] = request.Item;
         }
 
-        else if (request.action == "remove")
+        else if (request.Action == "remove")
         {
-            category[request.position] = null;
+            category[request.Position] = null;
         }
 
         else

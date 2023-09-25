@@ -1,3 +1,11 @@
+export async function loader() {
+  const user = await getUser();
+  if (!user) {
+    return redirect("/login");
+  }
+  return { user };
+}
+
 export default async function getUser() {
   const id = localStorage.getItem("id");
   let token = localStorage.getItem("token");
@@ -30,8 +38,6 @@ export default async function getUser() {
 
   const user = await userResponse.json();
 
-  console.log(user);
-
   const listsResponse = await fetch(`https://localhost:7038/Lists?id=${id}`, {
     method: "GET",
     headers: {
@@ -42,7 +48,6 @@ export default async function getUser() {
 
   const lists = await listsResponse.json();
 
-  console.log(lists);
   return { user, lists };
 }
 

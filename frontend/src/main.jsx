@@ -6,7 +6,8 @@ import Login from "./routes/login";
 import Home from "./routes/home";
 import Sucess from "./routes/success";
 import ErrorPage from "./error-page";
-import { loader as rootLoader } from "./routes/home.jsx";
+import { loader as rootLoader } from "./Loaders&Actions/RootLoader";
+import { action as rootAction } from "./Loaders&Actions/RootAction";
 import "./Main.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
     path: "/",
     element: <Home />,
     loader: rootLoader,
+    action: rootAction,
   },
   {
     path: "/sucess",

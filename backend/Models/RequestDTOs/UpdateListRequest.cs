@@ -2,9 +2,10 @@ namespace backend.Models;
 
 public class UpdateListRequest
 {
-    public required int userId { get; set; }
-    public required string category { get; set; }
-    public required int position { get; set; }
-    public required string item { get; set; }
-    public required string action { get; set; }
+    public required int UserId { get; set; }
+    public required string Category { get; set; }
+    public required int Position { get; set; }
+
+    public required string Item { get; set; }
+    public required string Action { get; set; }
 }
