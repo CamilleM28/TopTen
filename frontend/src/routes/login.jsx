@@ -2,8 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import GoogleG from "/btn_google_signin_light_normal_web@2x.png";
 import "../styles/login.css";
+import { useState } from "react";
 
 export default function Login() {
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -32,6 +35,12 @@ export default function Login() {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
+    if (confirmPassword !== password) {
+      alert("Passwords do not match");
+      return;
+    }
+
     const res = await fetch("https://localhost:7038/Auth/register", {
       method: "POST",
       headers: {
@@ -82,6 +91,12 @@ export default function Login() {
     flow: "auth-code",
   });
 
+  const emailRegex = String.raw`^\S+@\S+\.\S{2,3}$`;
+  const emailTitle = "Email must be in the format example@email.com";
+  const passwordRegex = String.raw`^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,32}$`;
+  const passwordTitle =
+    "Password must have at least 8 characters and conatin at east one uppercase character, lowercase character and digit";
+
   return (
     <div id="container">
       <div class="section" id="login">
@@ -89,12 +104,27 @@ export default function Login() {
 
         <form onSubmit={handleLogin}>
           <label>
-            Email <input type="text" name="email" required />
+            Email{" "}
+            <input
+              type="text"
+              name="email"
+              pattern={emailRegex}
+              title={emailTitle}
+              required
+            />
           </label>
+
           <br />
           <br />
           <label>
-            Password <input type="password" name="password" required />
+            Password{" "}
+            <input
+              type="password"
+              name="password"
+              pattern={passwordRegex}
+              title={passwordTitle}
+              required
+            />
           </label>
           <br />
           <br />
@@ -118,17 +148,38 @@ export default function Login() {
           <br />
           <br />
           <label>
-            Email <input type="text" name="email" required />
+            Email{" "}
+            <input
+              type="email"
+              name="email"
+              pattern={emailRegex}
+              title={emailTitle}
+              required
+            />
           </label>
           <br />
           <br />
           <label>
-            Password <input type="password" name="password" required />
+            Password{" "}
+            <input
+              type="password"
+              name="password"
+              pattern={passwordRegex}
+              title={passwordTitle}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </label>
           <br />
           <br />
           <label>
-            Confirm Password <input type="password" name="confirm" required />
+            Confirm Password{" "}
+            <input
+              type="password"
+              name="confirm"
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
           </label>
           <br />
           <br />
