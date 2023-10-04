@@ -1,65 +1,26 @@
-import { useNavigate } from "react-router-dom";
+import { Form } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import GoogleG from "/btn_google_signin_light_normal_web@2x.png";
 import "../styles/login.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Login() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const navigate = useNavigate();
+  const [warning, setWarning] = useState("");
+  const [isDisabled, setDisabled] = useState(true);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    const res = await fetch("https://localhost:7038/Auth/Login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify({
-        email: e.target.email.value,
-        password: e.target.password.value,
-      }),
-    });
+  const emailRegex = String.raw`^\S+@\S+\.\S{2,3}$`;
+  const emailTitle = "Email must be in the format example@email.com";
+  const passwordRegex = String.raw`^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,32}$`;
+  const passwordTitle =
+    "Password must have at least 8 characters and conatin at east one uppercase character, lowercase character and digit";
 
-    if (res.ok) {
-      const response = await res.json();
-      localStorage.setItem("id", response.id);
-      localStorage.setItem("token", response.token);
-      navigate("/");
-    } else {
-      alert("Wrong Credentials");
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-
-    if (confirmPassword !== password) {
-      alert("Passwords do not match");
-      return;
-    }
-
-    const res = await fetch("https://localhost:7038/Auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: e.target.username.value,
-        email: e.target.email.value,
-        password: e.target.password.value,
-      }),
-    });
-    console.log(e.target.password.value);
-    const response = await res.text();
-    if (res.ok) {
-      navigate("/sucess");
-    } else {
-      alert(`${response}`);
-    }
-  };
+  useEffect(() => {
+    password === confirmPassword
+      ? (setWarning(""), setDisabled(false))
+      : (setWarning("Passwords do not match "), setDisabled(true));
+  }, [password, confirmPassword]);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (CodeResponse) => {
@@ -91,18 +52,12 @@ export default function Login() {
     flow: "auth-code",
   });
 
-  const emailRegex = String.raw`^\S+@\S+\.\S{2,3}$`;
-  const emailTitle = "Email must be in the format example@email.com";
-  const passwordRegex = String.raw`^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,32}$`;
-  const passwordTitle =
-    "Password must have at least 8 characters and conatin at east one uppercase character, lowercase character and digit";
-
   return (
     <div id="container">
       <div class="section" id="login">
         <h1>Login</h1>
 
-        <form onSubmit={handleLogin}>
+        <Form method="post" action="/login">
           <label>
             Email{" "}
             <input
@@ -128,10 +83,10 @@ export default function Login() {
           </label>
           <br />
           <br />
-          <input class="submit" type="submit" value="Login" />
+          <input class="submit" name="submit" type="submit" value="Login" />
           <br />
           <br />
-        </form>
+        </Form>
         <hr />
         <br />
         <div id="google-button" onClick={googleLogin}>
@@ -141,9 +96,10 @@ export default function Login() {
 
       <div class="section">
         <h1>Register</h1>
-        <form onSubmit={handleRegister}>
+        <Form method="post" action="/login">
           <label>
-            Username <input type="text" name="username" required />
+            Username{" "}
+            <input type="text" name="username" minlength="3" required />
           </label>
           <br />
           <br />
@@ -166,7 +122,9 @@ export default function Login() {
               name="password"
               pattern={passwordRegex}
               title={passwordTitle}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+              }}
               required
             />
           </label>
@@ -177,14 +135,24 @@ export default function Login() {
             <input
               type="password"
               name="confirm"
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+              }}
               required
             />
           </label>
           <br />
+          <span>{warning}</span>
           <br />
-          <input class="submit" type="submit" value="Register" />
-        </form>
+          <br />
+          <input
+            class="submit"
+            name="submit"
+            type="submit"
+            value="Register"
+            disabled={isDisabled}
+          />
+        </Form>
       </div>
     </div>
   );

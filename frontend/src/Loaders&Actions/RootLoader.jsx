@@ -1,3 +1,5 @@
+import { redirect } from "react-router";
+
 export async function loader() {
   const user = await getUser();
   if (!user) {

@@ -21,6 +21,14 @@ public class AuthController : ControllerBase
 
     }
 
+    private readonly Lists lists = new()
+    {
+        Movies = new List<string>(new string[10]),
+        TV = new List<string>(new string[10]),
+        Music = new List<string>(new string[10]),
+        Books = new List<string>(new string[10]),
+    };
+
     [HttpPost("register")]
     public ActionResult<User> Register(RegistrationRequestDto request)
     {
@@ -39,13 +47,7 @@ public class AuthController : ControllerBase
             Email = request.Email,
             PasswordHash = passwordHash,
             PasswordSalt = passwordSalt,
-            Lists = new Lists
-            {
-                Movies = new List<string>(new string[10]),
-                TV = new List<string>(new string[10]),
-                Music = new List<string>(new string[10]),
-                Books = new List<string>(new string[10]),
-            }
+            Lists = lists
 
         };
 
@@ -129,15 +131,7 @@ public class AuthController : ControllerBase
             {
                 Name = name,
                 Email = email,
-
-                Lists = new Lists
-                {
-                    Movies = new List<string>(new string[10]),
-                    TV = new List<string>(new string[10]),
-                    Music = new List<string>(new string[10]),
-                    Books = new List<string>(new string[10]),
-                }
-
+                Lists = lists
             };
 
             _authRepository.Add(user);
