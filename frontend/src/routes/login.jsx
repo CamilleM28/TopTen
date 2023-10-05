@@ -1,4 +1,4 @@
-import { Form } from "react-router-dom";
+import { Form, useActionData } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import GoogleG from "/btn_google_signin_light_normal_web@2x.png";
 import "../styles/login.css";
@@ -7,8 +7,11 @@ import { useEffect, useState } from "react";
 export default function Login() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [warning, setWarning] = useState("");
+  const [passwordWarning, setPasswordWarning] = useState("");
+  const [googleError, setGoogleError] = useState("");
   const [isDisabled, setDisabled] = useState(true);
+
+  let actionData = useActionData();
 
   const emailRegex = String.raw`^\S+@\S+\.\S{2,3}$`;
   const emailTitle = "Email must be in the format example@email.com";
@@ -18,8 +21,8 @@ export default function Login() {
 
   useEffect(() => {
     password === confirmPassword
-      ? (setWarning(""), setDisabled(false))
-      : (setWarning("Passwords do not match "), setDisabled(true));
+      ? (setPasswordWarning(""), setDisabled(false))
+      : (setPasswordWarning("Passwords do not match "), setDisabled(true));
   }, [password, confirmPassword]);
 
   const googleLogin = useGoogleLogin({
@@ -46,114 +49,118 @@ export default function Login() {
         localStorage.setItem("token", response.token);
         navigate("/");
       } else {
-        alert("Wrong Credentials");
+        setGoogleError("Wrong Credentials");
       }
     },
     flow: "auth-code",
   });
 
   return (
-    <div id="container">
-      <div class="section" id="login">
-        <h1>Login</h1>
+    <>
+      <span>{actionData}</span>
+      <div id="container">
+        <div class="section" id="login">
+          <h1>Login</h1>
+          <Form method="post" action="/login">
+            <label>
+              Email{" "}
+              <input
+                type="text"
+                name="email"
+                pattern={emailRegex}
+                title={emailTitle}
+                required
+              />
+            </label>
 
-        <Form method="post" action="/login">
-          <label>
-            Email{" "}
-            <input
-              type="text"
-              name="email"
-              pattern={emailRegex}
-              title={emailTitle}
-              required
-            />
-          </label>
+            <br />
+            <br />
+            <label>
+              Password{" "}
+              <input
+                type="password"
+                name="password"
+                pattern={passwordRegex}
+                title={passwordTitle}
+                required
+              />
+            </label>
+            <br />
+            <br />
+            <input class="submit" name="submit" type="submit" value="Login" />
+            <br />
+            <br />
+          </Form>
+          <hr />
+          <br />
+          <div id="google-button" onClick={googleLogin}>
+            <img src={GoogleG} height="50px" />
+            <br />
+            <span>{googleError}</span>
+          </div>
+        </div>
 
-          <br />
-          <br />
-          <label>
-            Password{" "}
+        <div class="section">
+          <h1>Register</h1>
+          <Form method="post" action="/login">
+            <label>
+              Username{" "}
+              <input type="text" name="username" minlength="3" required />
+            </label>
+            <br />
+            <br />
+            <label>
+              Email{" "}
+              <input
+                type="email"
+                name="email"
+                pattern={emailRegex}
+                title={emailTitle}
+                required
+              />
+            </label>
+            <br />
+            <br />
+            <label>
+              Password{" "}
+              <input
+                type="password"
+                name="password"
+                pattern={passwordRegex}
+                title={passwordTitle}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+                required
+              />
+            </label>
+            <br />
+            <br />
+            <label>
+              Confirm Password{" "}
+              <input
+                type="password"
+                name="confirm"
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+                required
+              />
+            </label>
+            <br />
+            <span>{passwordWarning}</span>
+            <br />
+            <br />
             <input
-              type="password"
-              name="password"
-              pattern={passwordRegex}
-              title={passwordTitle}
-              required
+              class="submit"
+              name="submit"
+              type="submit"
+              value="Register"
+              disabled={isDisabled}
             />
-          </label>
-          <br />
-          <br />
-          <input class="submit" name="submit" type="submit" value="Login" />
-          <br />
-          <br />
-        </Form>
-        <hr />
-        <br />
-        <div id="google-button" onClick={googleLogin}>
-          <img src={GoogleG} height="50px" />
+          </Form>
         </div>
       </div>
-
-      <div class="section">
-        <h1>Register</h1>
-        <Form method="post" action="/login">
-          <label>
-            Username{" "}
-            <input type="text" name="username" minlength="3" required />
-          </label>
-          <br />
-          <br />
-          <label>
-            Email{" "}
-            <input
-              type="email"
-              name="email"
-              pattern={emailRegex}
-              title={emailTitle}
-              required
-            />
-          </label>
-          <br />
-          <br />
-          <label>
-            Password{" "}
-            <input
-              type="password"
-              name="password"
-              pattern={passwordRegex}
-              title={passwordTitle}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
-              required
-            />
-          </label>
-          <br />
-          <br />
-          <label>
-            Confirm Password{" "}
-            <input
-              type="password"
-              name="confirm"
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-              }}
-              required
-            />
-          </label>
-          <br />
-          <span>{warning}</span>
-          <br />
-          <br />
-          <input
-            class="submit"
-            name="submit"
-            type="submit"
-            value="Register"
-            disabled={isDisabled}
-          />
-        </Form>
-      </div>
-    </div>
+    </>
   );
 }

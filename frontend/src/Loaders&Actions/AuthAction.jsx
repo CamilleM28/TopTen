@@ -23,8 +23,7 @@ export async function authAction({ request }) {
       localStorage.setItem("token", response.token);
       return redirect("/");
     } else {
-      alert("Wrong Credentials");
-      return null;
+      return "Wrong Credentials";
     }
   }
 
@@ -45,8 +44,7 @@ export async function authAction({ request }) {
     if (res.ok) {
       return redirect("/sucess");
     } else {
-      alert(`${response}`);
-      return null;
+      return response;
     }
   }
 }
