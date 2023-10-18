@@ -1,4 +1,4 @@
-import { Form, useActionData } from "react-router-dom";
+import { Form, useActionData, useNavigate } from "react-router-dom";
 import { useGoogleLogin } from "@react-oauth/google";
 import GoogleG from "/btn_google_signin_light_normal_web@2x.png";
 import "../styles/login.css";
@@ -11,6 +11,7 @@ export default function Login() {
   const [googleError, setGoogleError] = useState("");
   const [isDisabled, setDisabled] = useState(true);
 
+  const navigate = useNavigate();
   let actionData = useActionData();
 
   const emailRegex = String.raw`^\S+@\S+\.\S{2,3}$`;
